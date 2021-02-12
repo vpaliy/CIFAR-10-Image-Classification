@@ -46,9 +46,12 @@ if __name__ == '__main__':
     X_train, X_test = normalize(X_train, X_test)
 
     model = SGDSoftmaxClassifier()
-    model.fit(X_train, y_train, 10)
+    errors = model.fit(X_train, y_train, 100)
     
     y_pred = model.predict(X_test)
 
 
     print(accuracy_score(y_pred, y_test))
+
+    plt.plot(range(len(errors)), errors, 'b-')
+    plt.show()

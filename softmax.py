@@ -8,11 +8,11 @@ def softmax(scores):
     return (np.exp(scores).T / np.sum(np.exp(scores), axis=1)).T
     
 
-_default_ridge = RidgeRegularization(1)
+_default_reg = RidgeRegularization()
 
 
 class SoftmaxClassifier(object):
-    def __init__(self, regularization=_default_ridge):
+    def __init__(self, regularization=_default_reg):
         self.regularization = regularization
     
     def fit(self, X, y, epochs=10, eta=1, tol=0.001):
@@ -52,7 +52,7 @@ class SoftmaxClassifier(object):
 
 
 class SGDSoftmaxClassifier(SoftmaxClassifier):
-    def fit(self, X, y, epochs=10, eta=0.01, tol=0.001, batch_size=200):
+    def fit(self, X, y, epochs=10, eta=1e-1, tol=1e-5, batch_size=200):
         N = len(y)
         if not batch_size or batch_size > N:
             batch_size = int(0.1 * N)
@@ -75,5 +75,6 @@ class SGDSoftmaxClassifier(SoftmaxClassifier):
             Xi = np.insert(X, 0, 1, axis=1)
             error = -np.mean(y * np.log(softmax(Xi.dot(self.W)))) + self.regularization(self.W)
             errors.append(error)
+            print('Epoch:{0}  Error:{1}'.format(epoch+1, error))
         return errors
 

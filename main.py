@@ -46,12 +46,33 @@ if __name__ == '__main__':
     X_train, X_test = normalize(X_train, X_test)
 
     model = SGDSoftmaxClassifier()
-    errors = model.fit(X_train, y_train, 100)
+    errors = model.fit(X_train, y_train, 5)
     
     y_pred = model.predict(X_test)
 
 
-    print(accuracy_score(y_pred, y_test))
+    print('Accuracy score:', accuracy_score(y_pred, y_test))
 
     plt.plot(range(len(errors)), errors, 'b-')
+    plt.xlabel('Iteration')
+    plt.ylabel('Error')
     plt.show()
+
+    weights = model.W[:,:-1].T
+    weights = weights.reshape(10, 32, 32, 3)
+
+    w_min, w_max = np.min(weights), np.max(weights)
+
+    classes = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+
+    for i in range(10):
+        plt.subplot(2, 5, i + 1)
+
+        # Rescale the weights to be between 0 and 255 for image representation
+        w_img = 255.0 * (weights[i].squeeze() - w_min) / (w_max - w_min)
+        plt.imshow(w_img.astype('uint8'))
+        plt.axis('off')
+        plt.title(classes[i])
+    plt.show()
+
+    
